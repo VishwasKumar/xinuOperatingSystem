@@ -32,3 +32,6 @@
 *.dSYM/
 
 mkimage
+
+# compiled files
+*~
