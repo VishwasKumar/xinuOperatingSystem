@@ -14,13 +14,10 @@ shellcmd xsh_hello(int nargs, char *args[]) {
 	int32	i;			/* walks through args array	*/
 
 	if (nargs > 1) {
-		printf("Hello %s, Welcome to the world of Xinu!!", args[1]);
-
-		for (i = 2; i < nargs; i++) {
+		for (i = 1; i < nargs; i++) {
 			printf("Hello %s, Welcome to the world of Xinu!!", args[i]);
+			printf("\n");
 		}
 	}
-	printf("\n");
-
 	return 0;
 }
