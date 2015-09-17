@@ -11,8 +11,6 @@
 
 shellcmd xsh_hello(int nargs, char *args[]) {
 
-	int32	i;			/* walks through args array	*/
-
 	if (nargs < 2)
 		printf("Too few arguments\n");
 	else if (nargs > 2)
