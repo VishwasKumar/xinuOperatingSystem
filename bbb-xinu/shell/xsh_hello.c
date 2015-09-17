@@ -13,8 +13,10 @@ shellcmd xsh_hello(int nargs, char *args[]) {
 
 	int32	i;			/* walks through args array	*/
 
-	if (nargs > 2 || nargs < 2)
-		printf("Invalid number of arguments\n");
+	if (nargs > 2 )
+		printf("Too many arguments\n");
+        else if(nargs < 2)
+                printf("Too few arguments")
 	 else
 		printf("Hello %s, Welcome to the world of Xinu!!\n", args[1]);
 	return 0;
