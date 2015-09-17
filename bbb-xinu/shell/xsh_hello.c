@@ -13,9 +13,9 @@ shellcmd xsh_hello(int nargs, char *args[]) {
 
 	int32	i;			/* walks through args array	*/
 
-	if (nargs > 1 || nargs < 1)
+	if (nargs > 2 || nargs < 2)
 		printf("Invalid number of arguments\n");
 	 else
-		printf("Hello %s, Welcome to the world of Xinu!!\n", args[0]);
+		printf("Hello %s, Welcome to the world of Xinu!!\n", args[1]);
 	return 0;
 }
