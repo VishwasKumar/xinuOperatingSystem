@@ -17,7 +17,7 @@ shellcmd xsh_hello(int nargs, char *args[]) {
 		printf("Description:\n");
 		printf("\tWrite arguments to the standard output.\n\n");
 		printf("\tDisplay the ARG, with message Hello <ARG>. Welcome to the world of Xinu!\
- and followed by a newline, on the standard output.\n");
+ 	and followed by a newline, on the standard output.\n");
 		printf("\t--help\tdisplay this help and exit\n");
 		return 0;
 	}
