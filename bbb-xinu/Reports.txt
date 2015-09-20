@@ -1,0 +1,4 @@
+Assignment 2
+1.
+
+2. Not all the values are getting consumed by the consumer. For a small count of value 20, one the final value of 20 is being printed by the consumer. Xinu does execute processes concurrently, Inspite of that the producer runs to the end of its execution cycle before the consumer starts executing.
