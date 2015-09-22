@@ -5,6 +5,7 @@ void consumer(int32 count)
 	int32 i;
     for (i = 0; i < count; i++)
     {
-    	printf("consumed :%d\n", n);//print consumed value e.g. consumed : 8
+    	kprintf("consumed :%d\n", n);//print consumed value e.g. consumed : 8
     }
+    exit(0);
 }

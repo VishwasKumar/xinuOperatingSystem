@@ -6,6 +6,7 @@
  	for (i = 0; i < count; i++) //Code to produce values less than equal to count
  	{
  		n = i; //produced value should get assigned to global variable 'n'
- 		printf("produced : %d\n", n); //print produced value e.g. produced : 8
+ 		kprintf("produced : %d\n", n); //print produced value e.g. produced : 8
  	}
+ 	exit(0);
  }
