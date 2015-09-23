@@ -3,7 +3,7 @@
 void consumer(int32 count)
 {
 	int32 i;
-    for (i = 0; i < count; i++)
+    for (i = 0; i <= count; i++)
     {
     	kprintf("consumed :%d\n", n);//print consumed value e.g. consumed : 8
     }
