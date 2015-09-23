@@ -30,8 +30,8 @@ const	struct	cmdent	cmdtab[] = {
 	{"uptime",	FALSE,	xsh_uptime},
 	{"?",		FALSE,	xsh_help},
 	{"hello", 	FALSE, 	xsh_hello},
-	{"prodcons",    TRUE,   xsh_prodcons}
-
+	{"prodcons",    TRUE,   xsh_prodcons},
+	{"reset", 	TRUE, 	xsh_reset}
 };
 
 uint32	ncmd = sizeof(cmdtab) / sizeof(struct cmdent);
