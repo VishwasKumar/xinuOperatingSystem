@@ -82,3 +82,6 @@ extern shellcmd xsh_prodcons	(int32, char *[]);
 /* in file xsh_reset.c */
 extern shellcmd xsh_reset	(int32, char *[]);
 
+/* in file xsh_boundedbuffer.c */
+extern shellcmd xsh_boundedbuffer(int32, char *[]);
+
