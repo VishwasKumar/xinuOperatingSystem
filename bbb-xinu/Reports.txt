@@ -9,7 +9,6 @@ Consumer() - Vishwas - The consumer function iterates through a loop for a user 
 
 The main function and the header file were written collaboratively between the two.
 
-
 Assignment 3
 
 1. We use wait() and signal() functions provided by xinu. 
@@ -47,8 +46,6 @@ void consumer(int count,sid32 S)
 
 
 Usually, a single sempahore is used when single same peice of code(critical section) with shared resources is exexcuted by multiple processes to gain lock on that piece of code. In that case mutex is used.
- 
-
  
 Producer() - Srikanth - The Producer is the first process to run from the main. The job of the producer is to iterate through a loop for a user defined count or default count of 2000. Wait for the consumer to finish its execution, achieve the lock once signalled by the consumer. Initialise a value in incremental order to the shared buffer n and prints out the produced value. Then, it releases the lock and signals the consumer to resume.
 
