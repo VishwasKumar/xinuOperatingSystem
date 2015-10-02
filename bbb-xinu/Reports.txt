@@ -8,3 +8,51 @@ Producer() - Srikanth - The Producer is the first process to run from the main. 
 Consumer() - Vishwas - The consumer function iterates through a loop for a user defined count or default count of 2000, and prints the value of shared buffer/ global variable n.
 
 The main function and the header file were written collaboratively between the two.
+
+
+Assignment 3
+
+1. We use wait() and signal() functions provided by xinu. 
+  semcreate() intializes the semaphores. produced semaphore is initialised to 0 and consumed to 1.
+  So, Initially there is no block on the producer. Once the producer has finished running its critical section, it signals     the consumer by setting the value of the produced semaphore to 1.
+ Now, Since the produced semaphore is 1, the block on the consumer is removed. So, the consumer executes its critical section  and signals the producer once the execution is finished.
+ This switching between processes continues until it has reached it limit either as specified by the user or a default value  of 2000 and synchronisation is achieved.
+ 
+ 2. No, we need 2 semaphores.
+ 
+Suppose, we create 2 processes producer and consumer with a single sempahore S. Initialize S to 1, assume producer gets executed first.S is decremented to 0, Producer finishes the execution and now signals on S. At this instant S=1 and both processes wait on S, there are equal chances of either processes getting executed. As a result , producer can again get executed resulting into no synchronisation.
+
+void producer(int count,sid32 S)
+{
+  int i;
+  for(i=1;i<=count;i++)
+    {
+      wait(S);	
+      n=i;	
+      kprintf("produced : %d\n",n);
+      signal(S);
+    }
+}
+
+void consumer(int count,sid32 S)
+{     
+  int i;
+  for(i=1;i<=count;i++)
+    {
+      wait(S);
+      kprintf("consumed: %d \n",n);
+      signal(S);
+    }
+}
+
+
+Usually, a single sempahore is used when single same peice of code(critical section) with shared resources is exexcuted by multiple processes to gain lock on that piece of code. In that case mutex is used.
+ 
+
+ 
+Producer() - Srikanth - The Producer is the first process to run from the main. The job of the producer is to iterate through a loop for a user defined count or default count of 2000. Wait for the consumer to finish its execution, achieve the lock once signalled by the consumer. Initialise a value in incremental order to the shared buffer n and prints out the produced value. Then, it releases the lock and signals the consumer to resume.
+
+Consumer() - Vishwas - The consumer function iterates through a loop for a user defined count or default count of 2000. Wait for the producer to finish its execution, achieve the lock once signalled by the producer. Once the lock is achieved, it executes its critical section and prints the value of shared buffer/ global variable n. Then, it releases the lock and signals the producer to resume.
+
+The main function and the header file were written collaboratively between the two.
+
