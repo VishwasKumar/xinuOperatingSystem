@@ -53,3 +53,10 @@ Consumer() - Vishwas - The consumer function iterates through a loop for a user 
 
 The main function and the header file were written collaboratively between the two.
 
+Assignment 4
+
+future_get() and future_alloc() - Srikanth
+future_set() and future_free() - Vishwas
+main() collaborately worked, to build the main
+
+
