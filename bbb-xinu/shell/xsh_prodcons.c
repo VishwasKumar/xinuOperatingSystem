@@ -17,10 +17,12 @@ shellcmd xsh_prodcons(int nargs, char *args[])
 	if (nargs == 2 && strncmp(args[1], "--help", 7) == 0) {
 		printf("Usage: %s\n\n", args[0]);
 		printf("Description:\n");
-		printf("\tThe producer and the consumer with Semaphores.\n\n");
+		printf("\tThe producer and the consumer with Semaphores.\n");
 		printf("\tThe producer's job is to generate a piece of data, put it into \
 the buffer and start again. At the same time, the consumer is consuming the data \
-(i.e., removing it from the buffer) one piece at a time.\n");
+(i.e., removing it from the buffer) one piece at a time.\n\n");
+		printf("-f\t Use futures concept to produce a random value in the future, while the consumer waits for the value which \
+will be set in the future\n\n");
 		printf("\t--help\tdisplay this help and exit\n");
 		return 0;
 	}
