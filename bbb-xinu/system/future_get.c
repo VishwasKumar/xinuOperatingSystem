@@ -11,13 +11,7 @@
 */
 
 syscall future_get(future *f, int *value){
-	// if(f->state==FUTURE_VALID){
-	// 	f->state=FUTURE_EMPTY;
-	// 	*value=*(f->value);
-	// 	return OK;
-	// }
-	// else
-	// 	return SYSERR;
+
 	intmask mask;
 	mask = disable();
 
