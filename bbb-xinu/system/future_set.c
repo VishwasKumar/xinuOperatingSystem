@@ -12,6 +12,7 @@
 syscall future_set(future *f, int *value){
 	intmask mask;
 	mask = disable();
+	
 	if(f->state==FUTURE_WAITING || f->state==FUTURE_EMPTY){
 		f->value=*value;
 		f->state=FUTURE_VALID;

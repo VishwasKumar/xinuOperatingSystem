@@ -73,5 +73,6 @@ will be set in the future\n\n");
   		resume( create(future_cons, 1024, 20, "fcons3", 1, f3) );
   		resume( create(future_prod, 1024, 20, "fprod3", 1, f3) );
 	}
+
 	return 0;
 }

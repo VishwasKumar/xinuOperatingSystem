@@ -13,6 +13,7 @@ syscall future_free(future* f){
 	intmask mask;
 	mask = disable();
 	semdelete(f->wait);
+	syscall mem_free = freemem(f, sizeof(future));
 	restore(mask);
-	return freemem(f, sizeof(future));
+	return mem_free;
 }
