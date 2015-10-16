@@ -14,3 +14,6 @@ typedef unsigned int uint;
   /*function Prototype*/
  void consumer(int32 count, sid32 consumed, sid32 produced);
  void producer(int32 count, sid32 consumed, sid32 produced);
+
+ uint future_cons(future *fut);
+ uint future_prod(future *fut);
