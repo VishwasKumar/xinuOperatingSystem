@@ -67,4 +67,20 @@ future_set(): Set a value in a future and changes state from FUTURE_EMPTY or FUT
 future_prod(): produces a random value for the consumer that is already created and waiting for the value to be produced.
 future_cons(): creates a consumer process, and it goes to sleep. the process is awaken only when the value is produced in the future.
 
+Assignment 5
 
+future_get(),enqueue() and future_alloc() - Vishwas
+future_set(), future_free()and dequeue() - Srikanth
+main()and queue.c collaborately worked, to build the main
+
+Functions used:
+future_alloc(): it allocates a new future (in the FUTURE_EMPTY state) in given mode. We will use getmem() call to allocate space to new future.
+future_free(): Free the allocated future. This function will simply free the space assigned to Future. Use freemem(). call to free the space.
+future_get(): Get the value of a future set by an operation and change the state of future from FUTURE_VALID to FUTURE_EMPTY.
+future_set(): Set a value in a future and changes state from FUTURE_EMPTY or FUTURE_WAITING to FUTURE_VALID.
+future_prod(): produces a random value for the consumer that is already created and waiting for the value to be produced.
+future_cons(): creates a consumer process, and it goes to sleep. the process is awaken only when the value is produced in the future.
+Enqueue() - The calling process suspends itself and uses enqueue() to enquque itself in the queue.
+Dequeue() - When a process is resumes, it is removed from the queue using the funtion Dequeue.
+Check_Thread() - returns the 1st suspended process's ID for resuming
+suspend() and resume() are used for synchronisation between futures
