@@ -16,7 +16,7 @@ syscall future_freemem(future* f){
  //    if (f->get_queue!=NULL)
  //         freemem(f->get_queue);
  //     freemem(f->value);
-     int returnval = freemem(f, sizeof(future));
+     syscall returnval = freemem(f, sizeof(future));
      restore(im);
 	return returnval;
 }

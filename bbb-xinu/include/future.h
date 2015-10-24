@@ -40,7 +40,7 @@ future get_q[];
 
 /* Interface for system call */
 future* future_alloc(int future_flags);
-syscall future_free(future *f);
+syscall future_free(future*);
 syscall future_get(future*, int*);
 syscall future_set(future*, int*);
 pid32 check_thread(queue *q);

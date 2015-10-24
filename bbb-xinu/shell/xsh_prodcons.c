@@ -76,7 +76,6 @@ will be set in the future\n\n");
         f_exclusive  =  future_alloc(FUTURE_EXCLUSIVE);
         f_shared  =  future_alloc(FUTURE_SHARED);
         f_queue  =  future_alloc(FUTURE_QUEUE);
-        //kprintf("%d\n", f_queue.state);
 
         //Test FUTURE_EXCLUSIVE
   		resume( create(future_cons, 1024, 20, "fcons1", 1, f_exclusive) );
@@ -99,6 +98,7 @@ will be set in the future\n\n");
         resume(  create(future_prod,  1024,  20,  "fprod5",  1,  f_queue)  );
         resume(  create(future_prod,  1024,  20,  "fprod6",  1,  f_queue)  );
 
+        
   //       future_free(f_exclusive);
   //   	future_free(f_shared); 
 		// future_free(f_queue);
