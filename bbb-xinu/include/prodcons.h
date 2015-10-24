@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <future.h>
+#include <string.h>
 
 typedef unsigned int uint;
 

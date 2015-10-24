@@ -1,5 +1,5 @@
 #include <prodcons.h>
-
+#include <stdlib.h>
 /*
 *Description
 *Set a value in a future and changes state from FUTURE_EMPTY or FUTURE_WAITING to FUTURE_VALID.
@@ -9,17 +9,83 @@
 *syscall: SYSERR or OK
 */
 
+void print_queuee(queue*q){
+    while(q!=NULL){
+        printf("element:%d\n\r",q->thread);
+        q=q->next;
+    }
+}
+
+int set_exclusive(future *f, int * value){
+    if(f->state==FUTURE_WAITING || f->state==FUTURE_EMPTY){
+        f->value=*value;
+        f->state=FUTURE_VALID;
+        //disable interrupts
+        intmask im=disable();
+        //put thread into ready queue
+        ready(f->tid);
+        //restore interrupts.
+        restore(im);
+        return OK;
+    }
+    return SYSERR;
+}
+
+int set_shared(future *f, int * value){
+    if(f->state!=FUTURE_VALID){
+        //print_queuee(f->get_queue);
+        intmask im=disable();
+        //set val
+        f->value=*value;
+        //set state
+        int oldstate=f->state;
+        //printf("oldstate=%d\n\r",oldstate);
+        f->state=FUTURE_VALID;
+        //if no consumer waiting
+        if(oldstate!=FUTURE_WAITING){
+            restore(im);
+            return OK;
+        }
+        //wake up first consumer:
+        //printf("prod state:%d\n\r",oldstate);
+        //Dequeue first in queue:
+        int first=check_thread(f->get_queue);
+        Dequeue(f->get_queue);
+        resume(first);
+        restore(im);
+        return OK;
+    }
+    return SYSERR;
+}
+/*
+ * consumer has to check if both queues are empty before setting the state. 
+ * AND set the states accordingly.
+ */
+int set_queue(future *f, int * value){
+   if (get_head != get_tail)
+   {
+       f->state = FUTURE_VALID;
+       f->tid = getpid();
+       f->value = *value;
+       future *temp = dq_get();
+       printf("%d\n", temp->tid);
+       temp->state = FUTURE_VALID;
+       temp->value = *value;
+       resume(temp->tid);
+   }
+}
+
 syscall future_set(future *f, int *value){
-	intmask mask;
-	mask = disable();
-	
-	if(f->state==FUTURE_WAITING || f->state==FUTURE_EMPTY){
-		f->value=*value;
-		f->state=FUTURE_VALID;
-		signal(f->wait);
-		restore(mask);
-		return OK;
-	}
-	restore(mask);
-	return SYSERR;
+    if(f->flag==FUTURE_EXCLUSIVE){
+        return set_exclusive(f,value);
+    }
+    else
+    if (f->flag==FUTURE_SHARED){
+        return set_shared(f,value);
+    }
+    else
+    if (f->flag==FUTURE_QUEUE){
+        return set_queue(f,value);
+    }
+    return SYSERR;
 }

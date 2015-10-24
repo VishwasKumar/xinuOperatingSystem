@@ -1,19 +1,22 @@
 #include <prodcons.h>
-
+#include <stdlib.h>
 /*
 *Description
-*Free the allocated future. This function will simply free the space assigned to Future. Use memfree(). call to free the space.
+*freemem the allocated future. This function will simply freemem the space assigned to Future. Use memfreemem(). call to freemem the space.
 *Parameters
-*future* f: future to free
+*future* f: future to freemem
 *Return
 *syscall: SYSERR or OK
 */
 
-syscall future_free(future* f){
-	intmask mask;
-	mask = disable();
-	semdelete(f->wait);
-	syscall mem_free = freemem(f, sizeof(future));
-	restore(mask);
-	return mem_free;
+syscall future_freemem(future* f){
+	intmask im=disable();
+	// if (f->set_queue!=NULL)
+ //         freemem(f->set_queue);
+ //    if (f->get_queue!=NULL)
+ //         freemem(f->get_queue);
+ //     freemem(f->value);
+     int returnval = freemem(f, sizeof(future));
+     restore(im);
+	return returnval;
 }

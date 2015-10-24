@@ -2,8 +2,18 @@
 
 
 
-future *f1, *f2, *f3;
-int32 n;                 //Definition for global variable 'n'
+future  *f_exclusive,  *f_shared,  *f_queue;
+int32 n; 
+int set_head = 0;
+int set_tail = 0;
+
+int get_head = 0;
+int get_tail = 0;
+
+future set_q[5];
+future get_q[5];
+
+                //Definition for global variable 'n'
 /*Now global variable n will be on Heap so it is accessible all the processes i.e. consume and produce*/
 sid32 consumed, produced; // Definition of Semaphores
 
@@ -62,17 +72,36 @@ will be set in the future\n\n");
 	}
 
 	else{
-  		f1 = future_alloc(FUTURE_EXCLUSIVE);
-  		f2 = future_alloc(FUTURE_EXCLUSIVE);
-  		f3 = future_alloc(FUTURE_EXCLUSIVE);
- 
-  		resume( create(future_cons, 1024, 20, "fcons1", 1, f1) );
-  		resume( create(future_prod, 1024, 20, "fprod1", 1, f1) );
-  		resume( create(future_cons, 1024, 20, "fcons2", 1, f2) );
-  		resume( create(future_prod, 1024, 20, "fprod2", 1, f2) );
-  		resume( create(future_cons, 1024, 20, "fcons3", 1, f3) );
-  		resume( create(future_prod, 1024, 20, "fprod3", 1, f3) );
-	}
 
+        f_exclusive  =  future_alloc(FUTURE_EXCLUSIVE);
+        f_shared  =  future_alloc(FUTURE_SHARED);
+        f_queue  =  future_alloc(FUTURE_QUEUE);
+        //kprintf("%d\n", f_queue.state);
+
+        //Test FUTURE_EXCLUSIVE
+  		resume( create(future_cons, 1024, 20, "fcons1", 1, f_exclusive) );
+  		resume( create(future_prod, 1024, 20, "fprod1", 1, f_exclusive) );
+ 
+ 		// Test FUTURE_SHARED
+        resume(  create(future_cons,  1024,  20,  "fcons2",  1,  f_shared)  );
+        resume(  create(future_cons,  1024,  20,  "fcons3",  1,  f_shared)  );
+        resume(  create(future_cons,  1024,  20,  "fcons4",  1,  f_shared)  );  
+        resume(  create(future_cons,  1024,  20,  "fcons5",  1,  f_shared)  );  
+        resume(  create(future_prod,  1024,  20,  "fprod2",  1,  f_shared)  );
+        
+        //  Test  FUTURE_QUEUE
+        resume(  create(future_cons,  1024,  20,  "fcons6",  1,  f_queue)  );
+        resume(  create(future_cons,  1024,  20,  "fcons7",  1,  f_queue)  );
+        resume(  create(future_cons,  1024,  20,  "fcons7",  1,  f_queue)  );  
+        resume(  create(future_cons,  1024,  20,  "fcons7",  1,  f_queue)  );
+        resume(  create(future_prod,  1024,  20,  "fprod3",  1,  f_queue)  );
+        resume(  create(future_prod,  1024,  20,  "fprod4",  1,  f_queue)  );
+        resume(  create(future_prod,  1024,  20,  "fprod5",  1,  f_queue)  );
+        resume(  create(future_prod,  1024,  20,  "fprod6",  1,  f_queue)  );
+
+  //       future_free(f_exclusive);
+  //   	future_free(f_shared); 
+		// future_free(f_queue);
+	}
 	return 0;
 }
