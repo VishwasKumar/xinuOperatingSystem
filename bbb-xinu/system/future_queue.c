@@ -45,13 +45,13 @@ void nq_get(future *f){
 }
 
 future* dq_set(){
+    future *t = &(set_q[set_head]);
     set_head +=1;
-    future *t = &(set_q[set_head-1]);
     return t;
 }
 
 future* dq_get(){
+    future *t = &(get_q[get_head]);
     get_head +=1;
-    future *t = &(get_q[get_head-1]);
     return t;
 }

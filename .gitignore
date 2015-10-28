@@ -35,3 +35,4 @@ mkimage
 
 # compiled files
 *~
+compile/*

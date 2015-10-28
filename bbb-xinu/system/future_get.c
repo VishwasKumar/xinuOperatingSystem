@@ -99,9 +99,16 @@ int get_shared(future *f, int * value){
 int get_queue(future *f, int * value){
     if (set_head != set_tail)
    {
-
+       intmask im = disable();
+       future *temp = dq_set();
+       printf("%d\n", temp->tid);
+       temp->state = FUTURE_VALID;
+       *value = temp->value;
+       resume(temp->tid);
+       restore(im);
    }
    else{
+        intmask im = disable();
         if (f->state == FUTURE_VALID)
         {
            *value = f->value;
@@ -110,10 +117,12 @@ int get_queue(future *f, int * value){
         else if (f->state == FUTURE_EMPTY || f-> state == FUTURE_WAITING)
         {
             f->state = FUTURE_WAITING;
+            f-> value = *value;
             f->tid = getpid();
             nq_get(f);
             put_thread_to_sleep(f->tid);
         }
+        restore(im);
    }
 }
 

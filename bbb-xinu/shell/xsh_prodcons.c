@@ -97,11 +97,15 @@ will be set in the future\n\n");
         resume(  create(future_prod,  1024,  20,  "fprod4",  1,  f_queue)  );
         resume(  create(future_prod,  1024,  20,  "fprod5",  1,  f_queue)  );
         resume(  create(future_prod,  1024,  20,  "fprod6",  1,  f_queue)  );
+		sleep(1);
 
-        
-  //       future_free(f_exclusive);
-  //   	future_free(f_shared); 
-		// future_free(f_queue);
+
+
+
+		
+        future_freemem(f_exclusive);
+    	future_freemem(f_shared); 
+		future_freemem(f_queue);
 	}
 	return 0;
 }

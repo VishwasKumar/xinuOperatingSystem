@@ -67,11 +67,15 @@ int set_queue(future *f, int * value){
        f->state = FUTURE_VALID;
        f->tid = getpid();
        f->value = *value;
+       // printf("hello %d\n", *value);
        future *temp = dq_get();
-       printf("%d\n", temp->tid);
+       // printf("tid: %d\n", temp->tid);
+       // printf("value: %d\n", temp->value);
        temp->state = FUTURE_VALID;
-       temp->value = *value;
+       temp->value = f->value;
+       intmask im = disable();
        resume(temp->tid);
+       restore(im);
    }
 }
 

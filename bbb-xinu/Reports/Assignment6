@@ -51,3 +51,6 @@ pid32 check_thread: - Returns the process id in front of the queue.
 
 void Dequeue: Pops the process id at the front of the queue.
 
+Alternatively we have used the array implementation also
+
+
