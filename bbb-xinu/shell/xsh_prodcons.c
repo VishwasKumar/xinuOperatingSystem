@@ -103,9 +103,16 @@ will be set in the future\n\n");
 
 
 		
-        future_freemem(f_exclusive);
-    	future_freemem(f_shared); 
-		future_freemem(f_queue);
+        syscall exclusive = future_freemem(f_exclusive);
+    	syscall shared = future_freemem(f_shared); 
+		syscall queue = future_freemem(f_queue);
+		if (!(exclusive == char *('OK') && shared == exclusive == char *('OK') && queue == exclusive == char *('OK'))
+		{
+			printf("There is an error, please check\n");
+		}
+		else{
+			printf("Success\n");
+		}
 	}
 	return 0;
 }
