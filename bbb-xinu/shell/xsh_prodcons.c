@@ -106,7 +106,7 @@ will be set in the future\n\n");
         syscall exclusive = future_freemem(f_exclusive);
     	syscall shared = future_freemem(f_shared); 
 		syscall queue = future_freemem(f_queue);
-		if (!(exclusive == char *('OK') && shared == exclusive == char *('OK') && queue == exclusive == char *('OK'))
+		if (!(exclusive == (uint32 *)OK && shared == (uint32 *)OK && queue == (uint32 *)OK))
 		{
 			printf("There is an error, please check\n");
 		}
