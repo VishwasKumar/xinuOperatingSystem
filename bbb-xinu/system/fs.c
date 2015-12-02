@@ -1,9 +1,9 @@
-#include <fs.h>
+// #include <fs.h>
 
-int	fopen	(char	*filename,	int	flags){
+// int	fopen	(char	*filename,	int	flags){
 
-}
+// }
 
-int	fclose(int	fd){
+// int	fclose(int	fd){
 	
-}
+// }
