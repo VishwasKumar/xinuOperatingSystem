@@ -13,12 +13,13 @@
 #define FUTURE_SHARED     2
 #define FUTURE_QUEUE      3
 
+#define SIZE 1024
 int set_head;
 int set_tail;
 
 int get_head;
 int get_tail;
-
+char response[SIZE];
 
 typedef struct{
     pid32 thread;
@@ -27,7 +28,7 @@ typedef struct{
 
 typedef struct futent
 {
-   int *value;		
+   char *value;		
    int flag;		
    int state;         	
    pid32 tid;
@@ -41,8 +42,8 @@ future get_q[];
 /* Interface for system call */
 future* future_alloc(int future_flags);
 syscall future_free(future*);
-syscall future_get(future*, int*);
-syscall future_set(future*, int*);
+syscall future_get(future*, char*);
+syscall future_set(future*, char*);
 pid32 check_thread(queue *q);
 void Enqueue(queue *q,pid32 thr);
 void put_thread_to_sleep(pid32 tid);

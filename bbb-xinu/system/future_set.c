@@ -16,7 +16,8 @@ void print_queuee(queue*q){
     }
 }
 
-int set_exclusive(future *f, int * value){
+int set_exclusive(future *f, char * value){
+    
     if(f->state==FUTURE_WAITING || f->state==FUTURE_EMPTY){
         f->value=*value;
         f->state=FUTURE_VALID;
@@ -28,7 +29,7 @@ int set_exclusive(future *f, int * value){
         restore(im);
         return OK;
     }
-    return SYSERR;
+    // return SYSERR;
 }
 
 int set_shared(future *f, int * value){
@@ -79,7 +80,7 @@ int set_queue(future *f, int * value){
    }
 }
 
-syscall future_set(future *f, int *value){
+syscall future_set(future *f, char *value){
     if(f->flag==FUTURE_EXCLUSIVE){
         return set_exclusive(f,value);
     }

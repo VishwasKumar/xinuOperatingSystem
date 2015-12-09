@@ -18,3 +18,6 @@ typedef unsigned int uint;
 
  uint future_cons(future *fut);
  uint future_prod(future *fut);
+
+ uint net_consumer(future *fut);
+ uint net_producer(future *fut, int32 slot, char *str);

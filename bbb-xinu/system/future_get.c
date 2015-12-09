@@ -10,7 +10,7 @@
 *syscall: SYSERR or OK
 */
 
-int get_exclusive(future *f, int *value){
+int get_exclusive(future *f, char *value){
     if(f->state==FUTURE_EMPTY){
         //set tid:
         f->tid=getpid();
@@ -126,7 +126,7 @@ int get_queue(future *f, int * value){
    }
 }
 
-syscall future_get(future *f, int *value){
+syscall future_get(future *f, char *value){
     //if tid id not set and state is empty
     if(f->flag==FUTURE_EXCLUSIVE){
         return get_exclusive(f,value);
