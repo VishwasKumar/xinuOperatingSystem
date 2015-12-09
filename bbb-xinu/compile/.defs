@@ -747,6 +747,8 @@ binaries/xsh_ps.o:             ../shell/xsh_ps.c
 	${CC} ${CFLAGS} -o binaries/xsh_ps.o ../shell/xsh_ps.c
 binaries/xsh_reset.o:          ../shell/xsh_reset.c
 	${CC} ${CFLAGS} -o binaries/xsh_reset.o ../shell/xsh_reset.c
+binaries/xsh_sendudp.o:        ../shell/xsh_sendudp.c
+	${CC} ${CFLAGS} -o binaries/xsh_sendudp.o ../shell/xsh_sendudp.c
 binaries/xsh_sleep.o:          ../shell/xsh_sleep.c
 	${CC} ${CFLAGS} -o binaries/xsh_sleep.o ../shell/xsh_sleep.c
 binaries/xsh_udpdump.o:        ../shell/xsh_udpdump.c

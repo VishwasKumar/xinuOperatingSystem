@@ -50,6 +50,8 @@ REBUILDFLAGS	=	-s $(TOPDIR)/system  debug.c 	\
 			-s $(TOPDIR)/shell  'xsh_rdstest*'      \
 			-s $(TOPDIR)/apps
 
+
+
 INCLUDE		=	-I$(TOPDIR)/include
 DEFS		= 	-DBSDURG -DVERSION=\""`cat $(VERSIONFILE)`"\"
 
