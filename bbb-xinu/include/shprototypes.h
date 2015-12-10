@@ -85,4 +85,4 @@ extern shellcmd xsh_reset	(int32, char *[]);
 /* in file xsh_boundedbuffer.c */
 extern shellcmd xsh_boundedbuffer(int32, char *[]);
 
-// extern shellcmd xsh_fstest(int, char *[]);
+extern shellcmd xsh_fstest(int, char *[]);
