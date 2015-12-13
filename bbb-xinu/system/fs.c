@@ -36,7 +36,7 @@ int get_next_free_block(){
     int i,block;
     //might as well search linearly
     for(i=0;i<fsd.nblocks;i++){
-        if(getmaskbit(i)==0){
+        if(fs_getmaskbit(i)==0){
             return i;
         }
     }
@@ -44,9 +44,9 @@ int get_next_free_block(){
     return -1;
 }
 
-int fopen(char *filename, int flags) // TO-DO: what to do with flags?
+int fs_open(char *filename, int flags) // TO-DO: what to do with flags?
 {   
-#if 0
+#if FS
     int i;
     struct inode in;
     int inode_num;
@@ -61,26 +61,8 @@ int fopen(char *filename, int flags) // TO-DO: what to do with flags?
             inode_num = dir.entry[i].inode_num;
 	
             // Get inode based on inode_num found above
-            // get_inode_by_num(int dev, int inode_number, struct inode *in)
-            get_inode_by_num(dev0, inode_num, &in);
-
-            /* for reference
-            struct inode {
-                int id;
-                short int type;
-                short int nlink;
-                int device;
-                int size;
-                int blocks[INODEBLOCKS];
-            };
-
-            struct filetable {
-                int state;
-                int fileptr;
-                struct dirent *de;
-                struct inode in;
-            };
-            */
+            // fs_get_inode_by_num(int dev, int inode_number, struct inode *in)
+            fs_get_inode_by_num(dev0, inode_num, &in);
 
             // Put stuff in open file table
             oft[next_open_fd].state = FSTATE_OPEN;
@@ -95,7 +77,7 @@ int fopen(char *filename, int flags) // TO-DO: what to do with flags?
         }
     }
 
-    fprintf(stderr, "fs::fopen(): file does not exist\n\r");
+    fprintf(stderr, "fs::fs_open(): file does not exist\n\r");
     return SYSERR;
 #endif
     if(flags>=0 && flags<=2){
@@ -124,7 +106,7 @@ int fopen(char *filename, int flags) // TO-DO: what to do with flags?
         strcpy((ft.de)->name, filename);
         struct inode in;
         //read file metadata inode:
-        get_inode_by_num(0,ft.de->inode_num,&in);
+        fs_get_inode_by_num(0,ft.de->inode_num,&in);
         //printf("in.id=%d\n",ft.de->inode_num);
         //cp in to ft:
         memcpy(&(ft.in),&in,sizeof(struct inode));
@@ -140,18 +122,18 @@ int fopen(char *filename, int flags) // TO-DO: what to do with flags?
     }
     else return SYSERR;
 }
-int fclose(int fd)
+int fs_close(int fd)
 {
     // check if fd is valid
     if ((fd > next_open_fd) || (fd < 0)){
-        fprintf(stderr, "fs::fclose: not valid fd\n\r");
+        fprintf(stderr, "fs::fs_close: not valid fd\n\r");
         return SYSERR;
     }
 
     oft[fd].state = FSTATE_CLOSED;
     return OK;
 }
-int fcreate(char *filename, int mode)
+int fs_create(char *filename, int mode)
 {
     if(mode==O_CREAT){
         //get root dir:
@@ -160,7 +142,7 @@ int fcreate(char *filename, int mode)
         int i;
         for(i=0;i<dir.numentries;i++){
             if(!strcmp(filename,dir.entry[i].name)){
-                fprintf(stderr, "fs::fcreate(): file already exists.\n\r");
+                fprintf(stderr, "fs::fs_create(): file already exists.\n\r");
                 return SYSERR;
             }
         }
@@ -178,11 +160,11 @@ int fcreate(char *filename, int mode)
         in.id=inode_id++;
         in.type=INODE_TYPE_FILE;
         //write inode 
-        put_inode_by_num(0,in.id,&in);
+        fs_put_inode_by_num(0,in.id,&in);
         //mark destination block:
         int bl = in.id / INODES_PER_BLOCK;
         bl += FIRST_INODE_BLOCK;
-        setmaskbit(bl);
+        fs_setmaskbit(bl);
         //write inode to filetable
         memcpy(&(ft.in),&in,sizeof(struct inode));
         //write inode_id to dirent:inode_num
@@ -201,27 +183,27 @@ int fcreate(char *filename, int mode)
     }
     else return SYSERR;
 }
-int fseek(int fd, int offset)
+int fs_seek(int fd, int offset)
 {
     //first, get the file table entry:
     struct filetable ft=oft[fd];
     //update fileptr
     offset=ft.fileptr+offset;
     if(offset<0){
-        fprintf(stderr,"fs::fseek: offset exceeds file boundary. resetting pointer to beginning of file\n\r");
+        fprintf(stderr,"fs::fs_seek: offset exceeds file boundary. resetting pointer to beginning of file\n\r");
         offset=0;
     }
     memcpy(&((oft+fd)->fileptr),&offset,sizeof(int));
     return fd;
 }
-int fread(int fd, void *buf, int nbytes)
+int fs_read(int fd, void *buf, int nbytes)
 {
-    //printf("fd at fread=%d\n",fd);
+    //printf("fd at fs_read=%d\n",fd);
     int orig_nbytes=nbytes;
     //first, get the file table entry:
     struct filetable ft=oft[fd];
     if(ft.state==FSTATE_CLOSED){
-        fprintf(stderr, "error %d. fs::fread(): invalid descriptor.\n\r",ft.state);
+        fprintf(stderr, "error %d. fs::fs_read(): invalid descriptor.\n\r",ft.state);
         return 0;
     }
     struct inode in = ft.in;
@@ -237,7 +219,7 @@ int fread(int fd, void *buf, int nbytes)
         while(nbytes>0){
             //if all data we want is in same block
             if(nbytes<(fsd.blocksz-inodeoffset)){
-                bread(0,dst_blk,inodeoffset,buf,nbytes);
+                bs_bread(0,dst_blk,inodeoffset,buf,nbytes);
                 //printf("debug:read:buf=%s,dst_blk=%d,inodeoffset=%d\n",buf,dst_blk,inodeoffset);
                 //incr fileptr:
                 ft.fileptr+=nbytes;
@@ -247,12 +229,12 @@ int fread(int fd, void *buf, int nbytes)
             }
             else{
                 if(inodeblk==INODEBLOCKS-1){
-                    fprintf(stderr, "fs::fread(): requested bytes exceeds limit, wrote valid values only.\n\r");
+                    fprintf(stderr, "fs::fs_read(): requested bytes exceeds limit, wrote valid values only.\n\r");
                     return orig_nbytes-nbytes;
                 }
-                bread(0,dst_blk,inodeoffset,buf,fsd.blocksz-inodeoffset);
+                bs_bread(0,dst_blk,inodeoffset,buf,fsd.blocksz-inodeoffset);
 #if 0
-                printf("debug:fread:inodeoffset=%d,nbytes=%d,inodeblk=%d,dst_blk=%d\n",inodeoffset,nbytes,inodeblk,dst_blk);
+                printf("debug:fs_read:inodeoffset=%d,nbytes=%d,inodeblk=%d,dst_blk=%d\n",inodeoffset,nbytes,inodeblk,dst_blk);
 
 #endif
                 buf+=(fsd.blocksz-inodeoffset);
@@ -271,7 +253,7 @@ int fread(int fd, void *buf, int nbytes)
 /**
  * return size wrote
  */
-int fwrite(int fd, void *buf, int nbytes)
+int fs_write(int fd, void *buf, int nbytes)
 {
     int orig_nbytes=nbytes;
     //first, get the file table entry:
@@ -281,7 +263,7 @@ int fwrite(int fd, void *buf, int nbytes)
 #endif
    
     if(ft.state==FSTATE_CLOSED){
-        fprintf(stderr, "error %d. fs::fwrite(): invalid descriptor.\n\r",ft.state);
+        fprintf(stderr, "error %d. fs::fs_write(): invalid descriptor.\n\r",ft.state);
         return 0;
     }
     struct inode in = ft.in;
@@ -306,21 +288,21 @@ int fwrite(int fd, void *buf, int nbytes)
                 memcpy(&((oft+fd)->in),&(in),sizeof(struct inode));
                 ft.in=in;
                 //write in back to the inode on disk
-                put_inode_by_num(0,in.id,&in);
+                fs_put_inode_by_num(0,in.id,&in);
 #if 0
                 struct inode temp;
-                get_inode_by_num(0,in.id,&temp);
+                fs_get_inode_by_num(0,in.id,&temp);
                 printf("write. updated inode %d, inode.block[0]=%d\n",temp.id,temp.blocks[0]);
 #endif
                 //mark that block as visited...
-                setmaskbit(dst_blk);
+                fs_setmaskbit(dst_blk);
             }
             else if(in.blocks[inodeblk]>0){
                 dst_blk=in.blocks[inodeblk]; 
             }
             //if all data we want to write can be put in same block
             if(nbytes<(fsd.blocksz-inodeoffset)){
-                bwrite(0,dst_blk,inodeoffset,buf,nbytes);
+                bs_bwrite(0,dst_blk,inodeoffset,buf,nbytes);
                 //incr fileptr:
                 ft.fileptr+=nbytes;
                 nbytes=0;
@@ -330,12 +312,12 @@ int fwrite(int fd, void *buf, int nbytes)
             }
             else{
                 if(inodeblk==INODEBLOCKS-1){
-                    fprintf(stderr, "fs::fwrite(): requested bytes exceeds limit, wrote valid values only.\n\r");
+                    fprintf(stderr, "fs::fs_write(): requested bytes exceeds limit, wrote valid values only.\n\r");
                     return orig_nbytes-nbytes;
                 }
-                bwrite(0,dst_blk,inodeoffset,buf,fsd.blocksz-inodeoffset);
+                bs_bwrite(0,dst_blk,inodeoffset,buf,fsd.blocksz-inodeoffset);
 #if 0
-                printf("debug:fwrite:inodeoffset=%d,nbytes=%d,inodeblk=%d,dstblk=%d\n\r",inodeoffset,nbytes,inodeblk,dst_blk);
+                printf("debug:fs_write:inodeoffset=%d,nbytes=%d,inodeblk=%d,dstblk=%d\n\r",inodeoffset,nbytes,inodeblk,dst_blk);
                 char tempbuf[512];
                 memcpy(tempbuf,buf,512);
                 printf("debug:wrote:%s\n\r",tempbuf);
@@ -357,7 +339,7 @@ int fwrite(int fd, void *buf, int nbytes)
 }
 
 
-int mkfs(int dev, int num_inodes) {
+int fs_mkfs(int dev, int num_inodes) {
   int i;
 
   if (dev == 0) {
@@ -381,7 +363,7 @@ int mkfs(int dev, int num_inodes) {
   fsd.freemaskbytes = i / 8;
 
   if ((fsd.freemask = getmem(fsd.freemaskbytes)) == (void *)SYSERR) {
-    printf("mkfs getmem failed.\n");
+    printf("fs_mkfs getmem failed.\n");
     return SYSERR;
   }
 
@@ -393,18 +375,18 @@ int mkfs(int dev, int num_inodes) {
   fsd.inodes_used = 0;
 
   /* write the fsystem block to SB_BLK, mark block used */
-  setmaskbit(SB_BLK);
-  bwrite(dev0, SB_BLK, 0, &fsd, sizeof(struct fsystem));
+  fs_setmaskbit(SB_BLK);
+  bs_bwrite(dev0, SB_BLK, 0, &fsd, sizeof(struct fsystem));
 
   /* write the free block bitmask in BM_BLK, mark block used */
-  setmaskbit(BM_BLK);
-  bwrite(dev0, BM_BLK, 0, fsd.freemask, fsd.freemaskbytes);
+  fs_setmaskbit(BM_BLK);
+  bs_bwrite(dev0, BM_BLK, 0, fsd.freemask, fsd.freemaskbytes);
 
   //custom code: mod 12/2/14:
   //add root dir:
   
-  setmaskbit(RT_BLK);
-  bwrite(dev0, RT_BLK, 0, &(fsd.root_dir), sizeof(struct directory));
+  fs_setmaskbit(RT_BLK);
+  bs_bwrite(dev0, RT_BLK, 0, &(fsd.root_dir), sizeof(struct directory));
 
 
   return 1;
@@ -425,7 +407,7 @@ int fileblock_to_diskblock(int dev, int fd, int fileblock) {
 
 /* read in an inode and fill in the pointer */
 int
-get_inode_by_num(int dev, int inode_number, struct inode *in) {
+fs_get_inode_by_num(int dev, int inode_number, struct inode *in) {
   int bl, inn;
   int inode_off;
 
@@ -434,7 +416,7 @@ get_inode_by_num(int dev, int inode_number, struct inode *in) {
     return SYSERR;
   }
   if (inode_number > fsd.ninodes) {
-    printf("get_inode_by_num: inode %d out of range\n", inode_number);
+    printf("fs_get_inode_by_num: inode %d out of range\n", inode_number);
     return SYSERR;
   }
 
@@ -449,7 +431,7 @@ get_inode_by_num(int dev, int inode_number, struct inode *in) {
   printf("inn*sizeof(struct inode): %d\n", inode_off);
   */
 
-  bread(dev0, bl, 0, &block_cache[0], fsd.blocksz);
+  bs_bread(dev0, bl, 0, &block_cache[0], fsd.blocksz);
   memcpy(in, &block_cache[inode_off], sizeof(struct inode));
 
   return OK;
@@ -457,7 +439,7 @@ get_inode_by_num(int dev, int inode_number, struct inode *in) {
 }
 
 int
-put_inode_by_num(int dev, int inode_number, struct inode *in) {
+fs_put_inode_by_num(int dev, int inode_number, struct inode *in) {
   int bl, inn;
 
   if (dev != 0) {
@@ -465,7 +447,7 @@ put_inode_by_num(int dev, int inode_number, struct inode *in) {
     return SYSERR;
   }
   if (inode_number > fsd.ninodes) {
-    printf("put_inode_by_num: inode %d out of range\n", inode_number);
+    printf("fs_put_inode_by_num: inode %d out of range\n", inode_number);
     return SYSERR;
   }
 
@@ -477,15 +459,15 @@ put_inode_by_num(int dev, int inode_number, struct inode *in) {
   printf("in_no: %d = %d/%d\n", inode_number, bl, inn);
   */
 
-  bread(dev0, bl, 0, block_cache, fsd.blocksz);
+  bs_bread(dev0, bl, 0, block_cache, fsd.blocksz);
   memcpy(&block_cache[(inn*sizeof(struct inode))], in, sizeof(struct inode));
-  bwrite(dev0, bl, 0, block_cache, fsd.blocksz);
+  bs_bwrite(dev0, bl, 0, block_cache, fsd.blocksz);
 
   return OK;
 }
 
 /* specify the block number to be set in the mask */
-int setmaskbit(int b) {
+int fs_setmaskbit(int b) {
   int mbyte, mbit;
   mbyte = b / 8;
   mbit = b % 8;
@@ -495,7 +477,7 @@ int setmaskbit(int b) {
 }
 
 /* specify the block number to be read in the mask */
-int getmaskbit(int b) {
+int fs_getmaskbit(int b) {
   int mbyte, mbit;
   mbyte = b / 8;
   mbit = b % 8;
@@ -506,7 +488,7 @@ int getmaskbit(int b) {
 }
 
 /* specify the block number to be unset in the mask */
-int clearmaskbit(int b) {
+int fs_clearmaskbit(int b) {
   int mbyte, mbit, invb;
   mbyte = b / 8;
   mbit = b % 8;
@@ -523,7 +505,7 @@ int clearmaskbit(int b) {
    positions to make the match in bit7 (the 8th bit) and then shift
    that value 7 times to the low-order bit to print.  Yes, it could be
    the other way...  */
-void printfreemask(void) {
+void fs_printfreemask(void) {
   int i,j;
 
   for (i=0; i < fsd.freemaskbytes; i++) {

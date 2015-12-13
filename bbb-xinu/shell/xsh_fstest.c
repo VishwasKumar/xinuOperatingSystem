@@ -49,15 +49,15 @@ void testbitmask(void);
 
 #if 1 
 
-    mkbsdev(0, MDEV_BLOCK_SIZE, MDEV_NUM_BLOCKS); /* device "0" and default blocksize (=0) and count */
-    mkfs(0,DEFAULT_NUM_INODES); /* bsdev 0*/
+    bs_mkdev(0, MDEV_BLOCK_SIZE, MDEV_NUM_BLOCKS); /* device "0" and default blocksize (=0) and count */
+    fs_mkfs(0,DEFAULT_NUM_INODES); /* bsdev 0*/
     testbitmask();
     
     buf1 = getmem(SIZE*sizeof(char));
     buf2 = getmem(SIZE*sizeof(char));
     
     // Create test file
-    fd = fcreate("Test_File", O_CREAT);
+    fd = fs_create("Test_File", O_CREAT);
        
     // Fill buffer with random stuff
     for(i=0; i<SIZE; i++)
@@ -70,7 +70,7 @@ void testbitmask(void);
     //debug:
     // printf("debug:buffer content:\n\r%s\n\r",buf1);
     
-    rval = fwrite(fd,buf1,SIZE);
+    rval = fs_write(fd,buf1,SIZE);
     if(rval == 0 || rval != SIZE )
     {
         printf("\n\r File write failed");
@@ -78,13 +78,13 @@ void testbitmask(void);
     }
 
     // Now my file offset is pointing at EOF file, i need to bring it back to start of file
-    // Assuming here implementation of fseek is like "original_offset = original_offset + 
-    // input_offset_from_fseek"
+    // Assuming here implementation of fs_seek is like "original_offset = original_offset + 
+    // input_offset_from_fs_seek"
     //printf("debug:fstest:rval=%d\n",rval);
-    fseek(fd,-rval); 
+    fs_seek(fd,-rval); 
     
     //read the file 
-    rval = fread(fd, buf2, rval);
+    rval = fs_read(fd, buf2, rval);
     buf2[rval] = '\0'; // used to be EOF     
 
     if(rval == 0)
@@ -95,15 +95,15 @@ void testbitmask(void);
         
     //printf("\n\rContent of file\n\r%s\n\r",buf2);
     
-    rval = fclose(fd);
+    rval = fs_close(fd);
     if(rval != OK)
     {
-        printf("\n\rReturn val for fclose : %d",rval);
+        printf("\n\rReturn val for fs_close : %d",rval);
     }
 
-    fd=fopen("Test_File",0);
+    fd=fs_open("Test_File",0);
     char buf3[10];
-    fread(fd,buf3,10);
+    fs_read(fd,buf3,10);
     // printf("buf3=%s\n\r",buf3);
 
 clean_up:
@@ -120,24 +120,24 @@ clean_up:
 void
 testbitmask(void) {
 
-    setmaskbit(31); setmaskbit(95); setmaskbit(159);setmaskbit(223);
-    setmaskbit(287); setmaskbit(351); setmaskbit(415);setmaskbit(479);
-    setmaskbit(90); setmaskbit(154);setmaskbit(218); setmaskbit(282);
-    setmaskbit(346); setmaskbit(347); setmaskbit(348); setmaskbit(349);
-    setmaskbit(350); setmaskbit(100); setmaskbit(164);setmaskbit(228);
-    setmaskbit(292); setmaskbit(356); setmaskbit(355); setmaskbit(354);
-    setmaskbit(353); setmaskbit(352);
+    fs_setmaskbit(31); fs_setmaskbit(95); fs_setmaskbit(159);fs_setmaskbit(223);
+    fs_setmaskbit(287); fs_setmaskbit(351); fs_setmaskbit(415);fs_setmaskbit(479);
+    fs_setmaskbit(90); fs_setmaskbit(154);fs_setmaskbit(218); fs_setmaskbit(282);
+    fs_setmaskbit(346); fs_setmaskbit(347); fs_setmaskbit(348); fs_setmaskbit(349);
+    fs_setmaskbit(350); fs_setmaskbit(100); fs_setmaskbit(164);fs_setmaskbit(228);
+    fs_setmaskbit(292); fs_setmaskbit(356); fs_setmaskbit(355); fs_setmaskbit(354);
+    fs_setmaskbit(353); fs_setmaskbit(352);
     
-    printfreemask();
+    fs_printfreemask();
 
-    clearmaskbit(31); clearmaskbit(95); clearmaskbit(159);clearmaskbit(223);
-    clearmaskbit(287); clearmaskbit(351); clearmaskbit(415);clearmaskbit(479);
-    clearmaskbit(90); clearmaskbit(154);clearmaskbit(218); clearmaskbit(282);
-    clearmaskbit(346); clearmaskbit(347); clearmaskbit(348); clearmaskbit(349);
-    clearmaskbit(350); clearmaskbit(100); clearmaskbit(164);clearmaskbit(228);
-    clearmaskbit(292); clearmaskbit(356); clearmaskbit(355); clearmaskbit(354);
-    clearmaskbit(353); clearmaskbit(352);
+    fs_clearmaskbit(31); fs_clearmaskbit(95); fs_clearmaskbit(159);fs_clearmaskbit(223);
+    fs_clearmaskbit(287); fs_clearmaskbit(351); fs_clearmaskbit(415);fs_clearmaskbit(479);
+    fs_clearmaskbit(90); fs_clearmaskbit(154);fs_clearmaskbit(218); fs_clearmaskbit(282);
+    fs_clearmaskbit(346); fs_clearmaskbit(347); fs_clearmaskbit(348); fs_clearmaskbit(349);
+    fs_clearmaskbit(350); fs_clearmaskbit(100); fs_clearmaskbit(164);fs_clearmaskbit(228);
+    fs_clearmaskbit(292); fs_clearmaskbit(356); fs_clearmaskbit(355); fs_clearmaskbit(354);
+    fs_clearmaskbit(353); fs_clearmaskbit(352);
 
-    printfreemask();
+    fs_printfreemask();
 
 }

@@ -12,7 +12,7 @@ int dev0 = 0;
 
 #if FS
 
-int mkbsdev(int dev, int blocksize, int numblocks) {
+int bs_mkdev(int dev, int blocksize, int numblocks) {
 
   if (dev != 0) {
     printf("Unsupported device: %d\n", dev);
@@ -34,7 +34,7 @@ int mkbsdev(int dev, int blocksize, int numblocks) {
   }
 
   if ( (dev0_blocks = getmem(dev0_numblocks * dev0_blocksize)) == (void *)SYSERR) {
-    printf("mkbsdev getmemfailed\n");
+    printf("bs_mkdev getmemfailed\n");
     return SYSERR;
   }
 
@@ -43,7 +43,7 @@ int mkbsdev(int dev, int blocksize, int numblocks) {
 }
 
 int 
-bread(int dev, int block, int offset, void *buf, int len) {
+bs_bread(int dev, int block, int offset, void *buf, int len) {
   char *bbase;
 
   if (dev != 0) {
@@ -65,7 +65,7 @@ bread(int dev, int block, int offset, void *buf, int len) {
 
 
 int 
-bwrite(int dev, int block, int offset, void * buf, int len) {
+bs_bwrite(int dev, int block, int offset, void * buf, int len) {
   char *bbase;
 
   if (dev != 0) {
@@ -85,4 +85,5 @@ bwrite(int dev, int block, int offset, void * buf, int len) {
 
 }
 
-#endif /* FS */
+#endif 
+/* FS */

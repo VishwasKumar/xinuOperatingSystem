@@ -63,35 +63,35 @@ struct fsystem{
 };
 
 /* file and directory functions */
-int fopen(char *filename, int flags); 
-int fclose(int fd);
-int fcreate(char *filename, int mode);
-int fseek(int fd, int offset);
-int fread(int fd, void *buf, int nbytes);
-int fwrite(int fd, void *buf, int nbytes);
+int fs_open(char *filename, int flags); 
+int fs_close(int fd);
+int fs_create(char *filename, int mode);
+int fs_seek(int fd, int offset);
+int fs_read(int fd, void *buf, int nbytes);
+int fs_write(int fd, void *buf, int nbytes);
 
 /* filesystem functions */
-int mkfs(int dev, int num_inodes);
+int fs_mkfs(int dev, int num_inodes);
 int fs_mount(int dev);
 
 /* filesystem internal functions */
-int get_inode_by_num(int dev, int inode_number, struct inode *in);
-int put_inode_by_num(int dev, int inode_number, struct inode *in);
-int setmaskbit(int b);
-int clearmaskbit(int b);
-int getmaskbit(int b);
+int fs_get_inode_by_num(int dev, int inode_number, struct inode *in);
+int fs_put_inode_by_num(int dev, int inode_number, struct inode *in);
+int fs_setmaskbit(int b);
+int fs_clearmaskbit(int b);
+int fs_getmaskbit(int b);
 
 /*
     Block Store functions
-    bread, bwrite,
-    bput, bget write entire blocks (macro with offset=0, len=blocksize)
+    bs_bread, bs_bwrite,
 */
-int mkbsdev(int dev, int blocksize, int numblocks);
-int bread(int bsdev, int block, int offset, void *buf, int len);
-int bwrite(int bsdev, int block, int offset, void * buf, int len);
+int bs_mkdev(int dev, int blocksize, int numblocks);
+int bs_bread(int bsdev, int block, int offset, void *buf, int len);
+int bs_bwrite(int bsdev, int block, int offset, void * buf, int len);
 
 /* debugging functions */
-void printfreemask(void);
-void print_fsd(void);
+void fs_printfreemask(void);
+void fs_print_fsd(void);
 
-#endif /* FS_H */
+#endif 
+/* FS_H */
