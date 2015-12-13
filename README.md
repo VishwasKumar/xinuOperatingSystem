@@ -1,4 +1,4 @@
-# Embedded Xinu #
+# Xinu Operating System #
 
 Embedded Xinu, Copyright (C) 2008, 2009, 2010.  All rights reserved.
 
